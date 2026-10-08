@@ -223,7 +223,8 @@ const T = {
         req: "Με αίτημα", reqHint: "Στέλνεις φωτογραφία και τι θέλεις. Σου προτείνουμε ώρα μέσα σε 24 ώρες.", from: "προκαταβολή από",
         who: "Με ποιον;", any: "Όποιον είναι ελεύθερος", day: "Ποια μέρα;", time: "Τι ώρα;", next: "Συνέχεια",
         total: "Σύνολο", depo: "Προκαταβολή τώρα", rest: "Στο μαγαζί", pay: "Πλήρωσε την προκαταβολή",
-        rule: "Αν ακυρώσεις λιγότερο από 24 ώρες πριν, η προκαταβολή δεν επιστρέφεται.",
+        rule: "Ακύρωση πάνω από 48 ώρες πριν: παίρνεις πίσω όλη την προκαταβολή. 48 έως 24 ώρες πριν: κρατάμε το 1/4. Λιγότερο από 24 ώρες πριν: δεν επιστρέφεται.",
+        r48: "Πάνω από 48 ώρες πριν", r24: "48 έως 24 ώρες πριν", r0: "Λιγότερο από 24 ώρες πριν", back: "επιστροφή", cancelT: "Αν ακυρώσεις",
         booked: "Το ραντεβού κλείστηκε", bookedP: "Θα σου στείλουμε μήνυμα 2 μέρες πριν, για να το επιβεβαιώσεις.",
         selfie: "Πάτα για selfie ή φωτογραφία", want: "Τι θέλεις να κάνεις;", wantPh: "π.χ. από μαύρα σε ξανθά, ή από μακριά σε καρέ",
         days: "Ποιες μέρες σε βολεύουν;", parts: "Ποια ώρα της μέρας;", morning: "Πρωί", noon: "Μεσημέρι", eve: "Απόγευμα",
@@ -235,7 +236,8 @@ const T = {
         req: "On request", reqHint: "Send a photo and what you'd like. We'll suggest a time within 24 hours.", from: "deposit from",
         who: "With whom?", any: "Whoever is free", day: "Which day?", time: "What time?", next: "Continue",
         total: "Total", depo: "Deposit now", rest: "At the salon", pay: "Pay the deposit",
-        rule: "If you cancel less than 24 hours before, the deposit is not refunded.",
+        rule: "Cancel more than 48 hours before: full deposit back. 48 to 24 hours before: we keep 1/4. Less than 24 hours before: no refund.",
+        r48: "More than 48 hours before", r24: "48 to 24 hours before", r0: "Less than 24 hours before", back: "refund", cancelT: "If you cancel",
         booked: "You're booked", bookedP: "We'll message you 2 days before so you can confirm.",
         selfie: "Tap to add a selfie or photo", want: "What would you like?", wantPh: "e.g. from black to blonde, or long hair to a bob",
         days: "Which days suit you?", parts: "Time of day?", morning: "Morning", noon: "Midday", eve: "Afternoon",
@@ -325,7 +327,10 @@ const client = makeApp(clientEl, {
         <div><span>${day}, ${time}</span><span>${who}</span></div></div>
         <div class="card sum"><div><span>${t("depo")}</span><span class="big">€${dep}</span></div>
         <div><span>${t("rest")}</span><span>€${s.price - dep}</span></div></div>
-        <p class="rule">${t("rule")}</p>
+        <div class="card sum"><b style="display:block;margin-bottom:4px">${t("cancelT")}</b>
+          <div><span>${t("r48")}</span><span>${t("back")} €${dep}</span></div>
+          <div><span>${t("r24")}</span><span>${t("back")} €${dep - Math.round(dep / 4)}</span></div>
+          <div><span>${t("r0")}</span><span>${t("back")} €0</span></div></div>
         <button class="btn" id="pay">${t("pay")} €${dep}</button>`;
     },
     wire: (el, d, app) => $(el, "#pay").onclick = () => { app.state.booking = d; app.go("booked"); },
