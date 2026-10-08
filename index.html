@@ -168,7 +168,7 @@ ol li{margin-bottom:6px}
         <tr><td>Capacitor</td><td>Το «κουτί» που το κάνει πραγματική εφαρμογή στα stores (κάμερα για selfie, ειδοποιήσεις).</td></tr>
         <tr><td>Supabase</td><td>Η βάση με τα ραντεβού. Αρνείται μόνη της δύο ραντεβού στην ίδια ώρα στον ίδιο κομμωτή.</td></tr>
         <tr><td>Viva Wallet ή Stripe</td><td>Η προκαταβολή πάει κατευθείαν στον λογαριασμό σου.</td></tr>
-        <tr><td>SMS + email</td><td>Η επιβεβαίωση 2 μέρες πριν, με το κουμπί «Θα έρθω».</td></tr>
+        <tr><td>SMS + email</td><td>Επιβεβαίωση 48 ώρες και 24 ώρες πριν, με το κουμπί «Θα έρθω».</td></tr>
         <tr><td>Viber / WhatsApp</td><td>Κουμπιά που ανοίγουν τη συνομιλία. Δωρεάν, χωρίς τίποτα επιπλέον.</td></tr>
       </table>
     </div>
@@ -188,7 +188,7 @@ ol li{margin-bottom:6px}
         <li><strong>Τιμοκατάλογος και αίτημα με selfie.</strong> Μπορείς να το δώσεις σε πελάτες από την πρώτη μέρα.</li>
         <li><strong>Άμεση κράτηση με προκαταβολή</strong> και ο κανόνας των 24 ωρών.</li>
         <li><strong>Το ημερολόγιό σου</strong> και η απάντηση στα αιτήματα.</li>
-        <li><strong>Η επιβεβαίωση 2 μέρες πριν</strong> με SMS και email.</li>
+        <li><strong>Η επιβεβαίωση 48 και 24 ώρες πριν</strong> με SMS και email.</li>
         <li><strong>App Store και Google Play.</strong> Μέχρι τότε δουλεύει ως ιστοσελίδα.</li>
       </ol>
     </div>
@@ -225,12 +225,12 @@ const T = {
         total: "Σύνολο", depo: "Προκαταβολή τώρα", rest: "Στο μαγαζί", pay: "Πλήρωσε την προκαταβολή",
         rule: "Ακύρωση πάνω από 48 ώρες πριν: παίρνεις πίσω όλη την προκαταβολή. 48 έως 24 ώρες πριν: κρατάμε το 1/4. Λιγότερο από 24 ώρες πριν: δεν επιστρέφεται.",
         r48: "Πάνω από 48 ώρες πριν", r24: "48 έως 24 ώρες πριν", r0: "Λιγότερο από 24 ώρες πριν", back: "επιστροφή", cancelT: "Αν ακυρώσεις",
-        booked: "Το ραντεβού κλείστηκε", bookedP: "Θα σου στείλουμε μήνυμα 2 μέρες πριν, για να το επιβεβαιώσεις.",
+        booked: "Το ραντεβού κλείστηκε", bookedP: "Θα σου στείλουμε μήνυμα 48 ώρες και 24 ώρες πριν, για να το επιβεβαιώσεις.",
         selfie: "Πάτα για selfie ή φωτογραφία", want: "Τι θέλεις να κάνεις;", wantPh: "π.χ. από μαύρα σε ξανθά, ή από μακριά σε καρέ",
         days: "Ποιες μέρες σε βολεύουν;", parts: "Ποια ώρα της μέρας;", morning: "Πρωί", noon: "Μεσημέρι", eve: "Απόγευμα",
         talk: "Πού να σου μιλήσουμε;", send: "Στείλε το αίτημα", sent: "Το αίτημα στάλθηκε",
         sentP: "Θα σου απαντήσουμε μέσα σε 24 ώρες με το πρώτο ελεύθερο ραντεβού.",
-        ask: "Σε 2 μέρες έχεις ραντεβού. Θα έρθεις;", yes: "Ναι, θα έρθω", cancel: "Ακύρωση", confirmed: "Επιβεβαιώθηκε",
+        ask: "Σε 48 ώρες έχεις ραντεβού. Θα έρθεις; (θα σε ξαναρωτήσουμε και 24 ώρες πριν)", yes: "Ναι, θα έρθω", cancel: "Ακύρωση", confirmed: "Επιβεβαιώθηκε",
         chat: "Μίλα μας", upcoming: "Επόμενο ραντεβού", min: "λεπτά" },
   en: { tabServices: "Services", tabMine: "My bookings", now: "Book instantly", nowHint: "Pick a time and pay a deposit.",
         req: "On request", reqHint: "Send a photo and what you'd like. We'll suggest a time within 24 hours.", from: "deposit from",
@@ -238,12 +238,12 @@ const T = {
         total: "Total", depo: "Deposit now", rest: "At the salon", pay: "Pay the deposit",
         rule: "Cancel more than 48 hours before: full deposit back. 48 to 24 hours before: we keep 1/4. Less than 24 hours before: no refund.",
         r48: "More than 48 hours before", r24: "48 to 24 hours before", r0: "Less than 24 hours before", back: "refund", cancelT: "If you cancel",
-        booked: "You're booked", bookedP: "We'll message you 2 days before so you can confirm.",
+        booked: "You're booked", bookedP: "We'll message you 48 and 24 hours before so you can confirm.",
         selfie: "Tap to add a selfie or photo", want: "What would you like?", wantPh: "e.g. from black to blonde, or long hair to a bob",
         days: "Which days suit you?", parts: "Time of day?", morning: "Morning", noon: "Midday", eve: "Afternoon",
         talk: "Where should we message you?", send: "Send request", sent: "Request sent",
         sentP: "We'll reply within 24 hours with the first free slot.",
-        ask: "Your appointment is in 2 days. Are you coming?", yes: "Yes, I'll be there", cancel: "Cancel", confirmed: "Confirmed",
+        ask: "Your appointment is in 48 hours. Are you coming? (we'll ask again 24 hours before)", yes: "Yes, I'll be there", cancel: "Cancel", confirmed: "Confirmed",
         chat: "Message us", upcoming: "Next appointment", min: "min" },
 };
 const t = k => T[lang][k];
@@ -393,8 +393,8 @@ const owner = makeApp(ownerEl, {
     html: () => Object.entries(TODAY).map(([st, list]) => `<div class="stylist">${st}</div>` +
       list.map(([tm, sv, cu, ok]) => `<div class="appt"><span class="t">${tm}</span>
         <span>${sv}<br><span class="s">${cu}</span></span>
-        <span class="badge ${ok ? "ok" : "wait"}">${ok ? "Θα έρθει" : "Δεν απάντησε"}</span></div>`).join("")).join("") +
-      `<p class="hint" style="margin-top:12px">«Θα έρθει» = πάτησε επιβεβαίωση στο μήνυμα των 2 ημερών. Η προκαταβολή έχει πληρωθεί.</p>`,
+        <span class="badge ${ok ? "ok" : "wait"}">${ok ? "48ω ✓ · 24ω ✓" : "48ω ✓ · 24ω …"}</span></div>`).join("")).join("") +
+      `<p class="hint" style="margin-top:12px">✓ = ο πελάτης πάτησε «Θα έρθω» στο μήνυμα 48 ωρών και στο μήνυμα 24 ωρών. Η προκαταβολή έχει πληρωθεί.</p>`,
   },
   requests: {
     html: () => REQS.length ? REQS.map((r, i) => `<div class="card req">
