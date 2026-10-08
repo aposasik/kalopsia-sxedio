@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="hub" content="off">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kalopsia — σχέδιο εφαρμογής</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* Το σχέδιο μιας εφαρμογής κρατήσεων για κομμωτήριο.
+   Σκούρο «μελάνι» με μπρούτζινη λεπτομέρεια, σκιές σε στρώσεις, γραμματοσειρά για εύκολο διάβασμα.
+   Όλα τα χρώματα ζουν εδώ ως μεταβλητές: στην Ionic εφαρμογή θα γίνουν τα ίδια tokens στο theme. */
+:root{
+  --ink:#17141a;      /* φόντο */
+  --deep:#1f1a23;     /* επιφάνεια */
+  --raise:#2a2430;    /* ανυψωμένο στοιχείο */
+  --line:#3a3242;
+  --text:#efe9e4;
+  --soft:#b3a9b5;
+  --brass:#c9a46a;    /* η μία έμφαση: κουμπιά, τιμές */
+  --brass-ink:#241a0c;
+  --sage:#8fb39a;     /* επιβεβαιωμένο */
+  --amber:#e3b45c;    /* περιμένει */
+  --shadow:0 1px 0 rgba(255,255,255,.04) inset,0 10px 24px -12px rgba(0,0,0,.7),0 2px 6px rgba(0,0,0,.35);
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0}
+html{background:var(--ink)}
+body{font-family:"Atkinson Hyperlegible Next",system-ui,sans-serif;color:var(--text);background:var(--ink);
+  font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.page{max-width:1120px;margin:0 auto;padding:40px 16px 64px}
+header.top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+header.top h1{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-.01em}
+header.top p{color:var(--soft);max-width:52ch}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{background:none;border:0;padding:6px 14px;cursor:pointer;color:var(--soft)}
+.lang button[aria-pressed=true]{background:var(--raise);color:var(--text)}
+
+.stage{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:40px;justify-items:center}
+.who{text-align:center;margin-bottom:12px;color:var(--soft)}
+.who b{color:var(--text);display:block;font-size:19px}
+
+/* το «κινητό» */
+.phone{width:340px;max-width:100%;height:690px;border-radius:38px;background:var(--deep);
+  border:1px solid var(--line);box-shadow:0 30px 60px -20px rgba(0,0,0,.8),0 0 0 8px #0e0c10;
+  display:flex;flex-direction:column;overflow:hidden;position:relative}
+.bar{padding:18px 20px 10px;display:flex;align-items:center;gap:10px}
+.bar .logo{font-weight:800;font-size:20px;letter-spacing:.02em}
+.bar .back{background:none;border:0;cursor:pointer;color:var(--soft);font-size:22px;line-height:1;padding:2px 6px;visibility:hidden}
+.bar .back.on{visibility:visible}
+.screen{flex:1;overflow:auto;padding:4px 16px 16px;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.tabs{display:flex;border-top:1px solid var(--line);background:var(--deep)}
+.tabs button{flex:1;background:none;border:0;padding:12px 4px 14px;cursor:pointer;color:var(--soft);font-size:14px}
+.tabs button[aria-selected=true]{color:var(--brass);font-weight:600}
+
+h2{font-size:15px;font-weight:600;color:var(--soft);margin:16px 2px 8px}
+.hint{font-size:14px;color:var(--soft);margin:0 2px 10px}
+.item{width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:10px;
+  background:var(--raise);border:1px solid transparent;border-radius:var(--r);padding:13px 14px;margin-bottom:8px;
+  box-shadow:var(--shadow);cursor:pointer}
+.item:hover{border-color:var(--line)}
+.item .n{font-weight:600}
+.item .d{font-size:14px;color:var(--soft)}
+.item .p{color:var(--brass);font-weight:600;white-space:nowrap}
+.card{background:var(--raise);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);margin-bottom:10px}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:14px;font-weight:800;cursor:pointer;
+  background:var(--brass);color:var(--brass-ink);margin-top:12px;box-shadow:0 8px 18px -10px rgba(201,164,106,.7)}
+.btn.ghost{background:none;color:var(--text);border:1px solid var(--line);box-shadow:none;font-weight:600}
+.row{display:flex;gap:8px}
+.row .btn{margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.chip{border:1px solid var(--line);background:var(--deep);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:15px}
+.chip[aria-pressed=true]{border-color:var(--brass);background:#3a2f22;color:var(--text)}
+.slot{min-width:72px;text-align:center}
+textarea{width:100%;min-height:84px;background:var(--deep);border:1px solid var(--line);border-radius:12px;padding:10px;resize:vertical}
+.selfie{display:flex;align-items:center;justify-content:center;height:110px;border:1px dashed var(--line);border-radius:12px;
+  color:var(--soft);cursor:pointer;margin-bottom:8px;background:var(--deep)}
+.sum div{display:flex;justify-content:space-between;padding:4px 0}
+.sum .big{font-size:20px;font-weight:800;color:var(--brass)}
+.rule{font-size:14px;color:var(--soft);border-left:3px solid var(--brass);padding:6px 10px;margin-top:10px;background:var(--deep);border-radius:0 8px 8px 0}
+.done{text-align:center;padding:40px 8px}
+.done .tick{width:64px;height:64px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;
+  background:var(--sage);color:#10200f;font-size:32px;font-weight:800}
+.done h3{font-size:22px;margin-bottom:6px}
+.done p{color:var(--soft)}
+.badge{font-size:13px;border-radius:999px;padding:2px 9px;font-weight:600}
+.badge.ok{background:rgba(143,179,154,.18);color:var(--sage)}
+.badge.wait{background:rgba(227,180,92,.16);color:var(--amber)}
+.alert{background:#3a2f22;border:1px solid #5a4630;border-radius:var(--r);padding:12px 14px;margin:10px 0}
+.alert b{display:block;margin-bottom:2px}
+.msg{display:flex;gap:8px}
+.msg a{flex:1;text-align:center;text-decoration:none;border-radius:12px;padding:11px;font-weight:600;font-size:15px;border:1px solid var(--line)}
+.msg .wa{color:#7fd39a}.msg .vb{color:#b79cf0}
+.stylist{font-size:13px;color:var(--soft);margin:14px 2px 6px}
+.appt{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;background:var(--raise);border-radius:12px;
+  padding:10px 12px;margin-bottom:6px;box-shadow:var(--shadow)}
+.appt .t{font-weight:800}
+.appt .s{font-size:14px;color:var(--soft)}
+.req img,.req .face{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#3b3142,#5a4a63);flex:none}
+.req .top{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.toast{position:absolute;left:16px;right:16px;bottom:70px;background:var(--text);color:var(--ink);border-radius:12px;
+  padding:11px 14px;font-weight:600;opacity:0;transform:translateY(8px);transition:.25s;pointer-events:none}
+.toast.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+
+/* κάτω μέρος: πώς θα το φτιάξουμε */
+.how{margin-top:64px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px}
+.how h3{font-size:22px;margin-bottom:10px}
+.how p,.how li{color:var(--soft);max-width:60ch}
+.how strong{color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+td:first-child{color:var(--text);font-weight:600;white-space:nowrap}
+td:last-child{color:var(--soft)}
+ol{padding-left:20px}
+ol li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <h1>Kalopsia, στο κινητό</h1>
+      <p>Πάτα επάνω στα δύο κινητά. Αριστερά βλέπει ο πελάτης, δεξιά βλέπεις εσύ. Είναι σχέδιο: τίποτα δεν αποθηκεύεται και δεν στέλνεται πουθενά.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Γλώσσα πελάτη">
+      <button data-lang="el" aria-pressed="true">Ελληνικά</button>
+      <button data-lang="en" aria-pressed="false">English</button>
+    </div>
+  </header>
+
+  <section class="stage">
+    <div>
+      <div class="who"><b>Ο πελάτης</b>κλείνει ή στέλνει αίτημα</div>
+      <div class="phone" id="client">
+        <div class="bar"><button class="back" aria-label="Πίσω">‹</button><span class="logo">Kalopsia</span></div>
+        <div class="screen"></div>
+        <nav class="tabs" role="tablist">
+          <button role="tab" data-tab="services" aria-selected="true" data-i="tabServices">Υπηρεσίες</button>
+          <button role="tab" data-tab="mine" aria-selected="false" data-i="tabMine">Τα ραντεβού μου</button>
+        </nav>
+        <div class="toast" role="status"></div>
+      </div>
+    </div>
+    <div>
+      <div class="who"><b>Εσύ, στο μαγαζί</b>ημερολόγιο και αιτήματα</div>
+      <div class="phone" id="owner">
+        <div class="bar"><button class="back" aria-label="Πίσω">‹</button><span class="logo">Kalopsia · μαγαζί</span></div>
+        <div class="screen"></div>
+        <nav class="tabs" role="tablist">
+          <button role="tab" data-tab="today" aria-selected="true">Σήμερα</button>
+          <button role="tab" data-tab="requests" aria-selected="false">Αιτήματα <span id="reqCount">(2)</span></button>
+        </nav>
+        <div class="toast" role="status"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how">
+    <div>
+      <h3>Πώς θα το φτιάξουμε</h3>
+      <table>
+        <tr><td>Ionic + Angular</td><td>Οι οθόνες. Ένας κώδικας για iPhone, Android και ιστοσελίδα.</td></tr>
+        <tr><td>Capacitor</td><td>Το «κουτί» που το κάνει πραγματική εφαρμογή στα stores (κάμερα για selfie, ειδοποιήσεις).</td></tr>
+        <tr><td>Supabase</td><td>Η βάση με τα ραντεβού. Αρνείται μόνη της δύο ραντεβού στην ίδια ώρα στον ίδιο κομμωτή.</td></tr>
+        <tr><td>Viva Wallet ή Stripe</td><td>Η προκαταβολή πάει κατευθείαν στον λογαριασμό σου.</td></tr>
+        <tr><td>SMS + email</td><td>Η επιβεβαίωση 2 μέρες πριν, με το κουμπί «Θα έρθω».</td></tr>
+        <tr><td>Viber / WhatsApp</td><td>Κουμπιά που ανοίγουν τη συνομιλία. Δωρεάν, χωρίς τίποτα επιπλέον.</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Τι κοστίζει να τρέχει</h3>
+      <table>
+        <tr><td>App Store</td><td>$99 τον χρόνο (Apple)</td></tr>
+        <tr><td>Google Play</td><td>$25 μία φορά</td></tr>
+        <tr><td>Βάση + ιστοσελίδα</td><td>Δωρεάν στην αρχή (μικρό μαγαζί)</td></tr>
+        <tr><td>SMS</td><td>Περίπου €0,05 το ένα</td></tr>
+        <tr><td>Πληρωμές</td><td>Μικρή προμήθεια του παρόχου ανά πληρωμή. Καμία προμήθεια ανά νέο πελάτη.</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Με ποια σειρά</h3>
+      <ol>
+        <li><strong>Τιμοκατάλογος και αίτημα με selfie.</strong> Μπορείς να το δώσεις σε πελάτες από την πρώτη μέρα.</li>
+        <li><strong>Άμεση κράτηση με προκαταβολή</strong> και ο κανόνας των 24 ωρών.</li>
+        <li><strong>Το ημερολόγιό σου</strong> και η απάντηση στα αιτήματα.</li>
+        <li><strong>Η επιβεβαίωση 2 μέρες πριν</strong> με SMS και email.</li>
+        <li><strong>App Store και Google Play.</strong> Μέχρι τότε δουλεύει ως ιστοσελίδα.</li>
+      </ol>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ── ΔΕΔΟΜΕΝΑ (στην εφαρμογή θα έρχονται από τη βάση) ─────────────── */
+const STAFF = ["Δημητριανός", "Ελένη", "Ιωάννα"];
+const INSTANT = [  // κλείνονται αμέσως, με προκαταβολή
+  { id: "cut-w", el: "Κούρεμα - φορμάρισμα", en: "Haircut & blow-dry", min: 45, price: 40 },
+  { id: "cut-m", el: "Κούρεμα ανδρικό", en: "Men's haircut", min: 30, price: 20 },
+  { id: "root", el: "Βαφή ρίζα", en: "Root colour", min: 90, price: 40 },
+  { id: "style", el: "Χτένισμα", en: "Styling", min: 45, price: 35 },
+  { id: "wash", el: "Λούσιμο", en: "Hair wash", min: 15, price: 5 },
+  { id: "mask", el: "Μάσκα ενυδάτωσης", en: "Hydration treatment", min: 60, price: 15 },
+];
+const REQUEST = [  // πρώτα αίτημα, μετά προτείνεις εσύ ώρα
+  { id: "change", el: "Αλλαγή χρώματος", en: "Colour change" },
+  { id: "bleach", el: "Αποχρωματισμός", en: "Bleaching" },
+  { id: "kerat", el: "Κερατίνη / Botox μαλλιών", en: "Keratin / hair botox", from: 20 },
+  { id: "ext", el: "Extensions", en: "Hair extensions", from: 30 },
+];
+const DEPOSIT = 0.3;          // 30% προκαταβολή (θα το ορίσεις εσύ)
+const DAYS = ["Τρι 13", "Τετ 14", "Πεμ 15", "Παρ 16", "Σαβ 17"];
+const SLOTS = ["10:00", "11:30", "13:00", "16:30", "18:00"];
+
+/* ── ΓΛΩΣΣΑ πελάτη ─────────────────────────────────────────────────── */
+let lang = "el";
+const T = {
+  el: { tabServices: "Υπηρεσίες", tabMine: "Τα ραντεβού μου", now: "Κλείσε αμέσως", nowHint: "Διαλέγεις ώρα και πληρώνεις προκαταβολή.",
+        req: "Με αίτημα", reqHint: "Στέλνεις φωτογραφία και τι θέλεις. Σου προτείνουμε ώρα μέσα σε 24 ώρες.", from: "προκαταβολή από",
+        who: "Με ποιον;", any: "Όποιον είναι ελεύθερος", day: "Ποια μέρα;", time: "Τι ώρα;", next: "Συνέχεια",
+        total: "Σύνολο", depo: "Προκαταβολή τώρα", rest: "Στο μαγαζί", pay: "Πλήρωσε την προκαταβολή",
+        rule: "Αν ακυρώσεις λιγότερο από 24 ώρες πριν, η προκαταβολή δεν επιστρέφεται.",
+        booked: "Το ραντεβού κλείστηκε", bookedP: "Θα σου στείλουμε μήνυμα 2 μέρες πριν, για να το επιβεβαιώσεις.",
+        selfie: "Πάτα για selfie ή φωτογραφία", want: "Τι θέλεις να κάνεις;", wantPh: "π.χ. από μαύρα σε ξανθά, ή από μακριά σε καρέ",
+        days: "Ποιες μέρες σε βολεύουν;", parts: "Ποια ώρα της μέρας;", morning: "Πρωί", noon: "Μεσημέρι", eve: "Απόγευμα",
+        talk: "Πού να σου μιλήσουμε;", send: "Στείλε το αίτημα", sent: "Το αίτημα στάλθηκε",
+        sentP: "Θα σου απαντήσουμε μέσα σε 24 ώρες με το πρώτο ελεύθερο ραντεβού.",
+        ask: "Σε 2 μέρες έχεις ραντεβού. Θα έρθεις;", yes: "Ναι, θα έρθω", cancel: "Ακύρωση", confirmed: "Επιβεβαιώθηκε",
+        chat: "Μίλα μας", upcoming: "Επόμενο ραντεβού", min: "λεπτά" },
+  en: { tabServices: "Services", tabMine: "My bookings", now: "Book instantly", nowHint: "Pick a time and pay a deposit.",
+        req: "On request", reqHint: "Send a photo and what you'd like. We'll suggest a time within 24 hours.", from: "deposit from",
+        who: "With whom?", any: "Whoever is free", day: "Which day?", time: "What time?", next: "Continue",
+        total: "Total", depo: "Deposit now", rest: "At the salon", pay: "Pay the deposit",
+        rule: "If you cancel less than 24 hours before, the deposit is not refunded.",
+        booked: "You're booked", bookedP: "We'll message you 2 days before so you can confirm.",
+        selfie: "Tap to add a selfie or photo", want: "What would you like?", wantPh: "e.g. from black to blonde, or long hair to a bob",
+        days: "Which days suit you?", parts: "Time of day?", morning: "Morning", noon: "Midday", eve: "Afternoon",
+        talk: "Where should we message you?", send: "Send request", sent: "Request sent",
+        sentP: "We'll reply within 24 hours with the first free slot.",
+        ask: "Your appointment is in 2 days. Are you coming?", yes: "Yes, I'll be there", cancel: "Cancel", confirmed: "Confirmed",
+        chat: "Message us", upcoming: "Next appointment", min: "min" },
+};
+const t = k => T[lang][k];
+const name = s => s[lang];
+
+/* ── μικρά εργαλεία ────────────────────────────────────────────────── */
+const $ = (root, sel) => root.querySelector(sel);
+function toast(phone, text) {
+  const el = $(phone, ".toast"); el.textContent = text; el.classList.add("on");
+  clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("on"), 2200);
+}
+// chips: μία επιλογή (single) ή πολλές
+function chips(list, { multi = false, cls = "" } = {}) {
+  return `<div class="chips" data-multi="${multi}">` +
+    list.map(x => `<button class="chip ${cls}" aria-pressed="false">${x}</button>`).join("") + "</div>";
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest(".chip"); if (!c) return;
+  const box = c.parentElement;
+  if (box.dataset.multi !== "true") box.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", "false"));
+  c.setAttribute("aria-pressed", c.getAttribute("aria-pressed") === "true" ? "false" : "true");
+});
+const picked = box => [...box.querySelectorAll('.chip[aria-pressed="true"]')].map(x => x.textContent);
+
+/* ── Ο «ΠΛΟΗΓΟΣ» κάθε κινητού: μια στοίβα από οθόνες ───────────────── */
+function makeApp(phone, screens, first) {
+  const app = { stack: [], state: {} };
+  const screen = $(phone, ".screen"), back = $(phone, ".back");
+  app.go = (name, data) => { app.stack.push([name, data]); app.draw(); };
+  app.reset = name => { app.stack = [[name]]; app.draw(); };
+  app.back = () => { if (app.stack.length > 1) { app.stack.pop(); app.draw(); } };
+  app.draw = () => {
+    const [n, d] = app.stack[app.stack.length - 1];
+    screen.innerHTML = screens[n].html(d, app);
+    screen.scrollTop = 0;
+    back.classList.toggle("on", app.stack.length > 1);
+    screens[n].wire?.(screen, d, app);
+  };
+  back.onclick = app.back;
+  phone.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
+    phone.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", x === b));
+    app.reset(b.dataset.tab);
+  });
+  app.reset(first);
+  return app;
+}
+
+/* ── ΠΕΛΑΤΗΣ ───────────────────────────────────────────────────────── */
+const clientEl = document.getElementById("client");
+const client = makeApp(clientEl, {
+  services: {
+    html: () => `
+      <h2>${t("now")}</h2><p class="hint">${t("nowHint")}</p>
+      ${INSTANT.map(s => `<button class="item" data-id="${s.id}"><span><span class="n">${name(s)}</span><br>
+        <span class="d">${s.min} ${t("min")}</span></span><span class="p">€${s.price}</span></button>`).join("")}
+      <h2>${t("req")}</h2><p class="hint">${t("reqHint")}</p>
+      ${REQUEST.map(s => `<button class="item" data-req="${s.id}"><span class="n">${name(s)}</span>
+        <span class="d">${s.from ? t("from") + " €" + s.from : ""}</span></button>`).join("")}`,
+    wire: (el, _, app) => {
+      el.querySelectorAll("[data-id]").forEach(b => b.onclick = () => app.go("pick", INSTANT.find(s => s.id === b.dataset.id)));
+      el.querySelectorAll("[data-req]").forEach(b => b.onclick = () => app.go("request", REQUEST.find(s => s.id === b.dataset.req)));
+    },
+  },
+  pick: {
+    html: s => `
+      <h2>${name(s)} · €${s.price}</h2>
+      <h2>${t("who")}</h2>${chips([t("any"), ...STAFF])}
+      <h2>${t("day")}</h2>${chips(DAYS)}
+      <h2>${t("time")}</h2>${chips(SLOTS, { cls: "slot" })}
+      <button class="btn" id="next">${t("next")}</button>`,
+    wire: (el, s, app) => $(el, "#next").onclick = () => {
+      const [who, day, time] = [...el.querySelectorAll(".chips")].map(b => picked(b)[0]);
+      if (!day || !time) return toast(clientEl, lang === "el" ? "Διάλεξε μέρα και ώρα" : "Pick a day and a time");
+      app.go("summary", { s, who: who || t("any"), day, time });
+    },
+  },
+  summary: {
+    html: ({ s, who, day, time }) => {
+      const dep = Math.round(s.price * DEPOSIT);
+      return `<div class="card sum"><div><span>${name(s)}</span><span>€${s.price}</span></div>
+        <div><span>${day}, ${time}</span><span>${who}</span></div></div>
+        <div class="card sum"><div><span>${t("depo")}</span><span class="big">€${dep}</span></div>
+        <div><span>${t("rest")}</span><span>€${s.price - dep}</span></div></div>
+        <p class="rule">${t("rule")}</p>
+        <button class="btn" id="pay">${t("pay")} €${dep}</button>`;
+    },
+    wire: (el, d, app) => $(el, "#pay").onclick = () => { app.state.booking = d; app.go("booked"); },
+  },
+  booked: {
+    html: () => `<div class="done"><div class="tick">✓</div><h3>${t("booked")}</h3><p>${t("bookedP")}</p></div>`,
+  },
+  request: {
+    html: s => `
+      <h2>${name(s)}</h2>
+      <label class="selfie" for="cam">📷 ${t("selfie")}</label><input id="cam" type="file" accept="image/*" capture="user" hidden>
+      <h2>${t("want")}</h2><textarea placeholder="${t("wantPh")}"></textarea>
+      <h2>${t("days")}</h2>${chips(DAYS, { multi: true })}
+      <h2>${t("parts")}</h2>${chips([t("morning"), t("noon"), t("eve")], { multi: true })}
+      <h2>${t("talk")}</h2>${chips(["Viber", "WhatsApp", "Email"])}
+      <button class="btn" id="send">${t("send")}</button>`,
+    wire: (el, s, app) => {
+      $(el, "#cam").onchange = e => { const f = e.target.files[0]; if (f) $(el, ".selfie").textContent = "✓ " + f.name; };
+      $(el, "#send").onclick = () => app.go("sent");
+    },
+  },
+  sent: {
+    html: () => `<div class="done"><div class="tick">✓</div><h3>${t("sent")}</h3><p>${t("sentP")}</p></div>`,
+  },
+  mine: {
+    html: (_, app) => {
+      const b = app.state.booking || { s: INSTANT[2], who: "Ιωάννα", day: "Πεμ 15", time: "11:30" };
+      const ok = app.state.confirmed;
+      return `${ok ? "" : `<div class="alert"><b>${t("ask")}</b>${t("rule")}
+          <div class="row"><button class="btn" id="yes">${t("yes")}</button><button class="btn ghost" id="no">${t("cancel")}</button></div></div>`}
+        <h2>${t("upcoming")}</h2>
+        <div class="card"><div style="display:flex;justify-content:space-between;align-items:center">
+          <b>${name(b.s)}</b>${ok ? `<span class="badge ok">${t("confirmed")}</span>` : ""}</div>
+          <div class="hint" style="margin:4px 0 0">${b.day}, ${b.time} · ${b.who}</div></div>
+        <h2>${t("chat")}</h2>
+        <div class="msg"><a class="wa" href="#" data-chat>WhatsApp</a><a class="vb" href="#" data-chat>Viber</a></div>`;
+    },
+    wire: (el, _, app) => {
+      $(el, "#yes") && ($(el, "#yes").onclick = () => { app.state.confirmed = true; app.draw(); });
+      $(el, "#no") && ($(el, "#no").onclick = () => toast(clientEl, t("rule")));
+      el.querySelectorAll("[data-chat]").forEach(a => a.onclick = e => { e.preventDefault();
+        toast(clientEl, lang === "el" ? "Στην εφαρμογή ανοίγει η συνομιλία" : "In the app this opens the chat"); });
+    },
+  },
+}, "services");
+
+/* ── ΜΑΓΑΖΙ ────────────────────────────────────────────────────────── */
+const ownerEl = document.getElementById("owner");
+const TODAY = {
+  "Δημητριανός": [["10:00", "Κούρεμα - φορμάρισμα", "Μαρία Κ.", true], ["13:00", "Αλλαγή χρώματος", "Elena R.", true]],
+  "Ελένη": [["11:30", "Χτένισμα", "Σοφία Π.", false]],
+  "Ιωάννα": [["11:30", "Βαφή ρίζα", "Άννα Μ.", true], ["16:30", "Κούρεμα ανδρικό", "Γιώργος Λ.", false]],
+};
+const REQS = [
+  { who: "Lina S.", what: "Αλλαγή χρώματος", text: "Θέλω από καστανά σε χάλκινα, όχι πολύ έντονα.", days: "Πεμ, Παρ", part: "Πρωί", via: "WhatsApp" },
+  { who: "Κατερίνα Δ.", what: "Extensions", text: "Θα ήθελα μάκρος μέχρι τη μέση για γάμο στις 25/10.", days: "Τρι, Σαβ", part: "Απόγευμα", via: "Viber" },
+];
+const owner = makeApp(ownerEl, {
+  today: {
+    html: () => Object.entries(TODAY).map(([st, list]) => `<div class="stylist">${st}</div>` +
+      list.map(([tm, sv, cu, ok]) => `<div class="appt"><span class="t">${tm}</span>
+        <span>${sv}<br><span class="s">${cu}</span></span>
+        <span class="badge ${ok ? "ok" : "wait"}">${ok ? "Θα έρθει" : "Δεν απάντησε"}</span></div>`).join("")).join("") +
+      `<p class="hint" style="margin-top:12px">«Θα έρθει» = πάτησε επιβεβαίωση στο μήνυμα των 2 ημερών. Η προκαταβολή έχει πληρωθεί.</p>`,
+  },
+  requests: {
+    html: () => REQS.length ? REQS.map((r, i) => `<div class="card req">
+        <div class="top"><div class="face" aria-label="selfie"></div><div><b>${r.who}</b><br><span class="hint">${r.what}</span></div></div>
+        <p>${r.text}</p><p class="hint" style="margin-top:6px">Βολεύει: ${r.days} · ${r.part} · μέσω ${r.via}</p>
+        <button class="btn" data-i="${i}">Πρότεινε ώρα</button></div>`).join("")
+      : `<div class="done"><h3>Κανένα αίτημα</h3><p>Τα νέα αιτήματα με selfie θα εμφανίζονται εδώ.</p></div>`,
+    wire: (el, _, app) => el.querySelectorAll("[data-i]").forEach(b => b.onclick = () => app.go("propose", +b.dataset.i)),
+  },
+  propose: {
+    html: i => { const r = REQS[i]; return `<h2>${r.who} · ${r.what}</h2><p class="hint">Βολεύει: ${r.days}, ${r.part}</p>
+      <h2>Ποια μέρα;</h2>${chips(DAYS)}<h2>Τι ώρα;</h2>${chips(SLOTS, { cls: "slot" })}
+      <h2>Διάρκεια</h2>${chips(["1½ ώρα", "2 ώρες", "3 ώρες"])}
+      <h2>Προκαταβολή</h2>${chips(["€20", "€30", "€50"])}
+      <button class="btn" id="go">Στείλε την πρόταση</button>
+      <div class="msg" style="margin-top:10px"><a class="wa" href="#" data-chat>WhatsApp</a><a class="vb" href="#" data-chat>Viber</a></div>`; },
+    wire: (el, i, app) => {
+      $(el, "#go").onclick = () => { REQS.splice(i, 1); document.getElementById("reqCount").textContent = `(${REQS.length})`;
+        toast(ownerEl, "Στάλθηκε. Ο πελάτης πληρώνει την προκαταβολή και κλείνει."); app.reset("requests"); };
+      el.querySelectorAll("[data-chat]").forEach(a => a.onclick = e => { e.preventDefault();
+        toast(ownerEl, "Στην εφαρμογή ανοίγει η συνομιλία με τον πελάτη"); });
+    },
+  },
+}, "today");
+
+/* ── αλλαγή γλώσσας (μόνο ο πελάτης: οι τουρίστες κλείνουν online) ─── */
+document.querySelectorAll(".lang button").forEach(b => b.onclick = () => {
+  lang = b.dataset.lang;
+  document.querySelectorAll(".lang button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  clientEl.querySelectorAll("[data-i]").forEach(x => x.textContent = t(x.dataset.i));
+  client.draw();
+});
+</script>
+</body>
+</html>
